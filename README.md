@@ -4,7 +4,7 @@ This repo shows how I would build and secure a small Node.js/Express + MongoDB s
 
 ---
 
-## 1. Project Structure
+## 1. Project Structure:
 
 devsecops-assignment/
 ├── Dockerfile
