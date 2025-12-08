@@ -4,13 +4,16 @@ module "vpc" {
   public_subnets  = var.public_subnets
   private_subnets = var.private_subnets
   azs             = var.azs
+
+  # Required IAM role ARN for VPC Flow Logs
+  flow_log_iam_role_arn = var.flow_log_iam_role_arn
 }
 
 module "eks" {
   source       = "./modules/eks"
   cluster_name = var.cluster_name
 
-  # EKS ko private subnets me chala rahe hain
+  # EKS will run in private subnets
   subnet_ids = module.vpc.private_subnet_ids
 
   node_group_desired = var.node_group_desired
@@ -19,6 +22,6 @@ module "eks" {
   instance_types     = var.instance_types
   tags               = var.tags
 
-  # NEW: KMS key ARN for secrets encryption
+  # KMS key ARN for secrets encryption
   kms_key_arn = var.kms_key_arn
 }

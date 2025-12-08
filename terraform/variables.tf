@@ -71,3 +71,8 @@ variable "kms_key_arn" {
   description = "KMS Key ARN to encrypt EKS secrets"
   type        = string
 }
+
+variable "flow_log_iam_role_arn" {
+  description = "IAM role ARN for VPC Flow Logs"
+  type        = string
+}
