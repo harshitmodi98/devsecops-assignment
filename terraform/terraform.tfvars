@@ -9,6 +9,9 @@ node_group_max     = 3
 instance_types     = ["t3.medium"]
 tags               = { Environment = "dev" }
 
-# Add your actual ARNs
-flow_log_iam_role_arn = "arn:aws:iam::123456789012:role/vpc-flow-logs-role"
-kms_key_arn           = "arn:aws:kms:ap-south-1:123456789012:key/abcd-1234-efgh-5678"
+# IAM and KMS ARNs
+flow_log_iam_role_arn    = "arn:aws:iam::123456789012:role/vpc-flow-logs-role"
+kms_key_arn              = "arn:aws:kms:ap-south-1:123456789012:key/abcd-1234-efgh-5678"
+
+# NEW: KMS key ARN for CloudWatch Log Group encryption
+cloudwatch_kms_key_arn   = "arn:aws:kms:ap-south-1:123456789012:key/wxyz-5678-ijkl-9012"

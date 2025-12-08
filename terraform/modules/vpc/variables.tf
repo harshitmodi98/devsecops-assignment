@@ -29,3 +29,8 @@ variable "flow_log_iam_role_arn" {
   description = "IAM role ARN for VPC Flow Logs"
   type        = string
 }
+
+variable "cloudwatch_kms_key_arn" {
+  description = "ARN of the KMS key to encrypt CloudWatch Log Group"
+  type        = string
+}

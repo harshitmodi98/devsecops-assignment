@@ -7,6 +7,9 @@ module "vpc" {
 
   # Required IAM role ARN for VPC Flow Logs
   flow_log_iam_role_arn = var.flow_log_iam_role_arn
+
+  # KMS key ARN for CloudWatch Log Group encryption
+  cloudwatch_kms_key_arn = var.cloudwatch_kms_key_arn
 }
 
 module "eks" {
@@ -22,6 +25,6 @@ module "eks" {
   instance_types     = var.instance_types
   tags               = var.tags
 
-  # KMS key ARN for secrets encryption
+  # KMS key ARN for EKS secrets encryption
   kms_key_arn = var.kms_key_arn
 }

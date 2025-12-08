@@ -76,3 +76,9 @@ variable "flow_log_iam_role_arn" {
   description = "IAM role ARN for VPC Flow Logs"
   type        = string
 }
+
+# NEW: KMS Key ARN for CloudWatch Log Group encryption (tfsec requirement)
+variable "cloudwatch_kms_key_arn" {
+  description = "KMS Key ARN to encrypt CloudWatch Log Groups for VPC Flow Logs"
+  type        = string
+}
