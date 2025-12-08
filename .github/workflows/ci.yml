@@ -1,0 +1,108 @@
+name: DevSecOps CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm test
+
+      # ---- Static code analysis (Semgrep) ----
+      - name: Semgrep scan
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/ci
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+        # If Semgrep finds blocking issues, job fails automatically
+
+      # ---- Build Docker image ----
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: |
+          docker build -t mynodeapp:ci .
+
+      # ---- Trivy image scan ----
+      - name: Trivy scan (image)
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: mynodeapp:ci
+          format: 'table'
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+          ignore-unfixed: true
+
+      # ---- Terraform validate + tfsec + checkov ----
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform init
+        working-directory: ./terraform
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        working-directory: ./terraform
+        run: terraform validate
+
+      - name: Install tfsec
+        run: |
+          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+
+      - name: Run tfsec
+        working-directory: ./terraform
+        run: tfsec .
+
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Checkov
+        working-directory: ./terraform
+        run: checkov -d .
+
+      # ---- Validate Kubernetes manifests (dry-run) ----
+      - name: Validate Kubernetes manifests (dry-run)
+        run: |
+          kubectl apply --dry-run=client -f k8s/
+        # Note: kubectl comes pre-installed in ubuntu-latest runners
+
+      # ---- Push image to GHCR (ONLY IF all security checks pass) ----
+      - name: Login to GHCR
+        if: success()
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag Docker image
+        if: success()
+        run: |
+          docker tag mynodeapp:ci ghcr.io/${{ github.repository_owner }}/devsecops-app:latest
+
+      - name: Push Docker image
+        if: success()
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/devsecops-app:latest

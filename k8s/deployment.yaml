@@ -1,30 +1,40 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo-app
-  namespace: default
+  name: nodejs-app
+  namespace: app-prod
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
-      app: demo
+      app: nodejs
   template:
     metadata:
       labels:
-        app: demo
+        app: nodejs
     spec:
       securityContext:
-        runAsNonRoot: true
         runAsUser: 1000
+        fsGroup: 2000
       containers:
-      - name: demo-container
-        image: my-app:latest
-        ports:
-        - containerPort: 3000
-        resources:
-          limits:
-            cpu: "500m"
-            memory: "256Mi"
-          requests:
-            cpu: "250m"
-            memory: "128Mi"
+        - name: nodejs
+          image: mynodeapp:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: MONGO_URI
+              value: "mongodb://mongo:27017/devsecops"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]

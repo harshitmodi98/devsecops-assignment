@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: demo-service
+  name: nodejs-svc
+  namespace: app-prod
 spec:
   selector:
-    app: demo
+    app: nodejs
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
       targetPort: 3000
-  type: ClusterIP
+      protocol: TCP
