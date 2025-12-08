@@ -1,2 +1,7 @@
-# devsecops-assignment
-End-to-end DevSecOps assignment demonstrating secure Docker image hardening, CI/CD security pipelines, Terraform-based EKS infrastructure simulation, Kubernetes hardening, and basic observability practices.
+This repository demonstrates an end-to-end DevSecOps workflow including:
+
+- Secure Docker image hardening
+- CI/CD pipeline with security scanning
+- Terraform-based EKS infrastructure simulation
+- Kubernetes hardening
+- Basic observability practices
