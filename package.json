@@ -10,14 +10,18 @@
   },
   "dependencies": {
     "cross-spawn": "7.0.5",
-    "express": "^5.2.1",
     "glob": "11.1.0",
-    "mongoose": "^9.0.1"
+    "express": "5.2.1",
+    "mongoose": "9.0.1"
   },
   "resolutions": {
+    "cross-spawn": "7.0.5",
+    "glob": "11.1.0",
     "@types/webidl-conversions": "7.0.3"
   },
   "overrides": {
+    "cross-spawn": "7.0.5",
+    "glob": "11.1.0",
     "@types/webidl-conversions": "7.0.3"
   }
 }
