@@ -96,19 +96,15 @@ resource "aws_flow_log" "vpc" {
 ##############################
 # Default Security Group (Restricted)
 ##############################
-resource "aws_default_security_group" "default" {
-  default_security_group_id = aws_vpc.this.default_security_group_id
+resource "aws_security_group" "default_restricted" {
+  name        = "${var.name}-default-sg"
+  description = "Default security group - restrict all inbound traffic"
+  vpc_id      = aws_vpc.this.id
 
-  # Ingress: deny all inbound traffic
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = []  # No inbound
-    description = "Block all inbound traffic"
-  }
+  # No ingress rules = blocks all inbound traffic
+  ingress {}
 
-  # Egress: allow traffic only within VPC
+  # Egress: restrict outbound traffic to within VPC
   egress {
     from_port   = 0
     to_port     = 0
@@ -122,13 +118,4 @@ resource "aws_default_security_group" "default" {
   tags = {
     Name = "${var.name}-default-sg"
   }
-}
-
-##############################
-# Dummy Network Interface to attach Default SG
-##############################
-resource "aws_network_interface" "dummy" {
-  subnet_id       = aws_subnet.private[0].id
-  private_ips     = [cidrhost(var.private_subnets[0], 10)]
-  security_groups = [aws_default_security_group.default.id]
 }
