@@ -1,13 +1,15 @@
 # ---------- Stage 1: Build Stage ----------
-FROM node:18-alpine AS builder
+FROM node:18-slim AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
+# Copy lockfile + package.json first
+COPY package.json package-lock.json ./
 
-# Install only production deps
-RUN npm ci --only=production
+# Install all deps using lockfile (includes overrides)
+RUN npm ci --omit=dev
 
+# Copy the rest of the app
 COPY . .
 
 # ---------- Stage 2: Runtime Stage ----------
@@ -17,17 +19,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
-# Fully update Debian (fixes libgnutls + perl-base CVEs)
+# Fully patch Debian for OS CVEs
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy built files
+# Copy only built node_modules + source
 COPY --from=builder /app /app
 
-# Use secure non-root user
+# Run as non-root
 USER node
 
 EXPOSE 3000
