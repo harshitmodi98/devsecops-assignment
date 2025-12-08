@@ -4,24 +4,14 @@
   "description": "Sample Node.js/Express app for DevSecOps task",
   "main": "src/index.js",
   "scripts": {
-    "preinstall": "npx npm-force-resolutions",
     "start": "node src/index.js",
     "test": "echo \"No tests yet\" && exit 0"
   },
   "dependencies": {
-    "cross-spawn": "7.0.5",
-    "glob": "11.1.0",
     "express": "5.2.1",
     "mongoose": "9.0.1"
   },
-  "resolutions": {
-    "cross-spawn": "7.0.5",
-    "glob": "11.1.0",
-    "@types/webidl-conversions": "7.0.3"
-  },
   "overrides": {
-    "cross-spawn": "7.0.5",
-    "glob": "11.1.0",
     "@types/webidl-conversions": "7.0.3"
   }
 }
