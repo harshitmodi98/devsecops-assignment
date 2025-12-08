@@ -18,4 +18,7 @@ module "eks" {
   node_group_max     = var.node_group_max
   instance_types     = var.instance_types
   tags               = var.tags
+
+  # NEW: KMS key ARN for secrets encryption
+  kms_key_arn = var.kms_key_arn
 }
