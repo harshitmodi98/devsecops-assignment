@@ -94,17 +94,17 @@ resource "aws_flow_log" "vpc" {
 }
 
 ##############################
-# Default Security Group (Restricted)
+# Restricted Security Group for the VPC
 ##############################
-resource "aws_security_group" "default_restricted" {
-  name        = "${var.name}-default-sg"
-  description = "Default security group - restrict all inbound traffic"
+resource "aws_security_group" "restricted_default" {
+  name        = "${var.name}-restricted-sg"
+  description = "Default security group - blocks all inbound traffic"
   vpc_id      = aws_vpc.this.id
 
-  # No ingress rules = blocks all inbound traffic
+  # No ingress rules: blocks all inbound
   ingress {}
 
-  # Egress: restrict outbound traffic to within VPC
+  # Egress: restrict outbound to inside VPC only
   egress {
     from_port   = 0
     to_port     = 0
@@ -116,6 +116,6 @@ resource "aws_security_group" "default_restricted" {
   revoke_rules_on_delete = true
 
   tags = {
-    Name = "${var.name}-default-sg"
+    Name = "${var.name}-restricted-sg"
   }
 }
