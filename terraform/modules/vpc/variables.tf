@@ -24,3 +24,8 @@ variable "azs" {
   type        = list(string)
   default     = ["ap-south-1a", "ap-south-1b"]
 }
+
+variable "flow_log_iam_role_arn" {
+  description = "IAM role ARN for VPC Flow Logs"
+  type        = string
+}
