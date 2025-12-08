@@ -17,3 +17,13 @@ output "node_group_name" {
   description = "EKS managed node group name"
   value       = aws_eks_node_group.this.node_group_name
 }
+
+output "node_group_arn" {
+  description = "ARN of the EKS managed node group"
+  value       = aws_eks_node_group.this.arn
+}
+
+output "node_group_instance_types" {
+  description = "EC2 instance types used in the managed node group"
+  value       = aws_eks_node_group.this.instance_types
+}

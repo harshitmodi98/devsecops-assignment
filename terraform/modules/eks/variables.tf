@@ -45,6 +45,6 @@ variable "tags" {
 }
 
 variable "kms_key_arn" {
-  description = "KMS Key ARN to encrypt EKS secrets"
+  description = "KMS Key ARN for encrypting EKS secrets"
   type        = string
 }

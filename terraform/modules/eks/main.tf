@@ -76,7 +76,7 @@ resource "aws_iam_role_policy_attachment" "ecr_readonly" {
 }
 
 #######################################
-# EKS Cluster (Updated for tfsec compliance)
+# EKS Cluster (TFSEC + Terraform compliant)
 #######################################
 resource "aws_eks_cluster" "this" {
   name     = var.cluster_name
@@ -84,14 +84,14 @@ resource "aws_eks_cluster" "this" {
   version  = "1.29"
 
   vpc_config {
-    subnet_ids              = var.subnet_ids
-    endpoint_public_access  = false      # Disable public access
-    public_access_cidrs     = []         # No public CIDR allowed
+    subnet_ids             = var.subnet_ids
+    endpoint_public_access = false    # Disable public access
+    public_access_cidrs    = []       # No public CIDR allowed
   }
 
   encryption_config {
     provider {
-      key_arn = var.kms_key_arn           # Pass KMS key for secrets encryption
+      key_arn = var.kms_key_arn         # REQUIRED: KMS key ARN
     }
     resources = ["secrets"]
   }
