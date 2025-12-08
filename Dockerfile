@@ -6,10 +6,10 @@ WORKDIR /app
 # Copy lockfile + package.json first
 COPY package.json package-lock.json ./
 
-# Install all deps using lockfile (includes overrides)
-RUN npm ci --omit=dev
+# Install all production deps using lockfile (includes overrides)
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Copy the rest of the app
+# Copy rest of the app
 COPY . .
 
 # ---------- Stage 2: Runtime Stage ----------
@@ -26,10 +26,10 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy only built node_modules + source
+# Copy built app + node_modules from builder
 COPY --from=builder /app /app
 
-# Run as non-root
+# Run as non-root user
 USER node
 
 EXPOSE 3000
