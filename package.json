@@ -15,9 +15,9 @@
     "mongoose": "^9.0.1"
   },
   "resolutions": {
-    "@types/webidl-conversions": "^7.0.4"
+    "@types/webidl-conversions": "7.0.3"
   },
   "overrides": {
-    "@types/webidl-conversions": "^7.0.4"
+    "@types/webidl-conversions": "7.0.3"
   }
 }
