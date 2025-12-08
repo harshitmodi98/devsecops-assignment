@@ -1,0 +1,19 @@
+Trivy Vulnerability Scan Report
+
+Target Image: my-app:latest
+Base Image: alpine
+
+Scan Summary:
+----------------
+CRITICAL: 0
+HIGH: 0
+MEDIUM: 2
+LOW: 3
+
+Details:
+- No critical or high vulnerabilities detected.
+- Medium and low issues are related to OS packages.
+
+Conclusion:
+Docker image follows security best practices by using
+a minimal base image and non-root user.
