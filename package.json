@@ -9,9 +9,9 @@
     "test": "echo \"No tests yet\" && exit 0"
   },
   "dependencies": {
-    "cross-spawn": "7.0.6",
+    "cross-spawn": "7.0.5",
     "express": "^5.2.1",
-    "glob": "13.0.0",
+    "glob": "11.1.0",
     "mongoose": "^9.0.1"
   },
   "resolutions": {
