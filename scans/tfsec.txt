@@ -1,0 +1,9 @@
+TFSEC Scan Report
+
+Scan Target: terraform/
+
+Warnings:
+- IAM Role allows full admin permissions (demo purpose)
+- EKS Cluster security group has open ports (demo)
+
+No critical issues detected.
