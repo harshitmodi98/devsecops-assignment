@@ -79,6 +79,7 @@ resource "aws_route_table_association" "public_association" {
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/aws/vpc/${var.name}"
   retention_in_days = 90
+  kms_key_id        = var.cloudwatch_kms_key_arn 
 }
 
 ##############################
