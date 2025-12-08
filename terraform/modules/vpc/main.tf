@@ -78,17 +78,44 @@ resource "aws_route_table_association" "public_association" {
 ##############################
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/aws/vpc/${var.name}"
-  retention_in_days = 90
-  kms_key_id        = var.cloudwatch_kms_key_arn 
+  retention_in_days = 365
+  kms_key_id        = var.cloudwatch_kms_key_arn
 }
 
 ##############################
 # VPC Flow Logs
 ##############################
 resource "aws_flow_log" "vpc" {
-  vpc_id              = aws_vpc.this.id
-  traffic_type        = "ALL"
+  vpc_id               = aws_vpc.this.id
+  traffic_type         = "ALL"
   log_destination_type = "cloud-watch-logs"
-  log_destination     = aws_cloudwatch_log_group.vpc_flow_logs.arn
-  iam_role_arn        = var.flow_log_iam_role_arn
+  log_destination      = aws_cloudwatch_log_group.vpc_flow_logs.arn
+  iam_role_arn         = var.flow_log_iam_role_arn
+}
+
+##############################
+# Restrict Default Security Group
+##############################
+resource "aws_security_group" "default" {
+  name        = "default"
+  description = "Default security group - restrict all inbound traffic"
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = []  # Block all inbound traffic
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow all outbound traffic
+  }
+
+  tags = {
+    Name = "${var.name}-default-sg"
+  }
 }
