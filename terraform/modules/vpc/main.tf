@@ -101,16 +101,16 @@ resource "aws_security_group" "default" {
   description = "Default security group - restrict all inbound traffic"
   vpc_id      = aws_vpc.this.id
 
-  # Ingress: block all inbound traffic
+  # Ingress: deny all inbound traffic (explicitly)
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = []  # Block all inbound traffic
-    description = "Block all inbound traffic"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Deny all inbound traffic"
   }
 
-  # Egress: restrict outbound traffic to VPC only (secure)
+  # Egress: restrict outbound traffic to VPC only
   egress {
     from_port   = 0
     to_port     = 0
@@ -118,6 +118,8 @@ resource "aws_security_group" "default" {
     cidr_blocks = [var.vpc_cidr]  # Allow only within VPC
     description = "Allow outbound traffic only within VPC"
   }
+
+  revoke_rules_on_delete = true
 
   tags = {
     Name = "${var.name}-default-sg"
