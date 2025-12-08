@@ -1,0 +1,36 @@
+name: DevSecOps Security Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Run static code analysis (Semgrep)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: "p/default"
+
+      - name: Build Docker image
+        run: |
+          docker build -t devsecops-demo-app .
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: devsecops-demo-app
+          severity: CRITICAL,HIGH
+          exit-code: 1
