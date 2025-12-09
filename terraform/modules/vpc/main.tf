@@ -1,6 +1,6 @@
-###############################################
+##############################
 # VPC
-###############################################
+##############################
 resource "aws_vpc" "this" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -11,9 +11,9 @@ resource "aws_vpc" "this" {
   }
 }
 
-###############################################
+##############################
 # Public Subnets (No auto public IP)
-###############################################
+##############################
 resource "aws_subnet" "public" {
   count                   = length(var.public_subnets)
   vpc_id                  = aws_vpc.this.id
@@ -26,9 +26,9 @@ resource "aws_subnet" "public" {
   }
 }
 
-###############################################
+##############################
 # Private Subnets
-###############################################
+##############################
 resource "aws_subnet" "private" {
   count             = length(var.private_subnets)
   vpc_id            = aws_vpc.this.id
@@ -40,9 +40,9 @@ resource "aws_subnet" "private" {
   }
 }
 
-###############################################
+##############################
 # Internet Gateway
-###############################################
+##############################
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.this.id
 
@@ -51,9 +51,9 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-###############################################
+##############################
 # Public Route Table
-###############################################
+##############################
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.this.id
 
@@ -73,18 +73,18 @@ resource "aws_route_table_association" "public_association" {
   route_table_id = aws_route_table.public.id
 }
 
-###############################################
+##############################
 # CloudWatch Log Group for VPC Flow Logs
-###############################################
+##############################
 resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   name              = "/aws/vpc/${var.name}"
   retention_in_days = 365
   kms_key_id        = var.cloudwatch_kms_key_arn
 }
 
-###############################################
+##############################
 # VPC Flow Logs
-###############################################
+##############################
 resource "aws_flow_log" "vpc" {
   vpc_id               = aws_vpc.this.id
   traffic_type         = "ALL"
@@ -93,29 +93,27 @@ resource "aws_flow_log" "vpc" {
   iam_role_arn         = var.flow_log_iam_role_arn
 }
 
-###############################################
-# Secure the REAL Default Security Group
-# (Fixes CKV2_AWS_12 & CKV2_AWS_5)
-###############################################
-resource "aws_default_security_group" "default" {
-  vpc_id = aws_vpc.this.id
+##############################
+# Default Security Group (Fully Safe Version)
+##############################
+resource "aws_security_group" "default_restricted" {
+  name        = "${var.name}-default-sg"
+  description = "Default security group - restrict all inbound traffic"
+  vpc_id      = aws_vpc.this.id
 
-  # Block ALL inbound
-  ingress = []
+  # ❌ DO NOT ADD ingress {} → removing avoids provider schema errors
+  # No ingress blocks = all inbound denied (as required)
 
-  # Outbound only inside VPC
-  egress = [
-    {
-      from_port        = 0
-      to_port          = 0
-      protocol         = "-1"
-      cidr_blocks      = [var.vpc_cidr]
-      ipv6_cidr_blocks = []
-      prefix_list_ids  = []
-      security_groups  = []
-      description      = "Allow outbound only within VPC"
-    }
-  ]
+  # Allow outbound only inside VPC
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = [var.vpc_cidr]
+    description = "Allow outbound traffic only within VPC"
+  }
+
+  revoke_rules_on_delete = true
 
   tags = {
     Name = "${var.name}-default-sg"

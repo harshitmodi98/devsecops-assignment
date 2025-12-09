@@ -20,7 +20,7 @@ variable "private_subnets" {
 }
 
 variable "azs" {
-  description = "Availability zones"
+  description = "Availability zones (matching subnet counts)"
   type        = list(string)
   default     = ["ap-south-1a", "ap-south-1b"]
 }
@@ -31,6 +31,6 @@ variable "flow_log_iam_role_arn" {
 }
 
 variable "cloudwatch_kms_key_arn" {
-  description = "KMS key ARN for CloudWatch Logs"
+  description = "ARN of the KMS key to encrypt CloudWatch Log Group"
   type        = string
 }
