@@ -94,28 +94,22 @@ resource "aws_flow_log" "vpc" {
 }
 
 ##############################
-# Restrict Default Security Group
+# Default Security Group (Fully Safe Version)
 ##############################
-resource "aws_security_group" "default" {
-  name        = "default"
+resource "aws_security_group" "default_restricted" {
+  name        = "${var.name}-default-sg"
   description = "Default security group - restrict all inbound traffic"
   vpc_id      = aws_vpc.this.id
 
-  # Ingress: deny all inbound traffic
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = []  # ❌ Empty list = no inbound allowed
-    description = "Block all inbound traffic"
-  }
+  # ❌ DO NOT ADD ingress {} → removing avoids provider schema errors
+  # No ingress blocks = all inbound denied (as required)
 
-  # Egress: restrict outbound traffic to VPC only
+  # Allow outbound only inside VPC
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = [var.vpc_cidr]  # Allow only within VPC
+    cidr_blocks = [var.vpc_cidr]
     description = "Allow outbound traffic only within VPC"
   }
 
