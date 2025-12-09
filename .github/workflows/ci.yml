@@ -70,6 +70,7 @@ jobs:
       - name: Install tfsec
         run: |
           curl -sSfL https://raw.githubusercontent.com/aquasecurity/tfsec/main/scripts/install.sh | sh
+          sudo mv tfsec /usr/local/bin/
 
       - name: Run tfsec
         working-directory: ./terraform
