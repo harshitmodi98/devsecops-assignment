@@ -81,11 +81,15 @@ jobs:
         working-directory: ./terraform
         run: checkov -d .
 
-      # ---- Validate Kubernetes manifests (dry-run) ----
-      - name: Validate Kubernetes manifests (dry-run)
+      # ---- Validate Kubernetes manifests (client-side only) ----
+      - name: Install kubeconform
         run: |
-          kubectl apply --dry-run=client --validate=false -f k8s/
-        # Note: kubectl comes pre-installed in ubuntu-latest runners
+          curl -L https://github.com/yannh/kubeconform/releases/download/v0.6.3/kubeconform-linux-amd64.tar.gz \
+          | tar xz && sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate Kubernetes manifests (kubeconform)
+        run: |
+          kubeconform -strict -ignore-missing-schemas -summary -recursive k8s/
 
       # ---- Push image to GHCR (ONLY IF all security checks pass) ----
       - name: Login to GHCR
