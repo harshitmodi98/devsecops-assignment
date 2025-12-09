@@ -66,9 +66,10 @@ jobs:
         working-directory: ./terraform
         run: terraform validate
 
+      # ---- Install tfsec (fixed) ----
       - name: Install tfsec
         run: |
-          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+          curl -sSfL https://raw.githubusercontent.com/aquasecurity/tfsec/main/scripts/install.sh | sh
 
       - name: Run tfsec
         working-directory: ./terraform
