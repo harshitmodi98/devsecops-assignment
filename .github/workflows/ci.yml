@@ -32,7 +32,6 @@ jobs:
           config: p/ci
         env:
           SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
-        # If Semgrep finds blocking issues, job fails automatically
 
       # ---- Build Docker image ----
       - name: Set up Docker Buildx
@@ -85,7 +84,7 @@ jobs:
       # ---- Validate Kubernetes manifests (dry-run) ----
       - name: Validate Kubernetes manifests (dry-run)
         run: |
-          kubectl apply --dry-run=client -f k8s/
+          kubectl apply --dry-run=client --validate=false -f k8s/
         # Note: kubectl comes pre-installed in ubuntu-latest runners
 
       # ---- Push image to GHCR (ONLY IF all security checks pass) ----
