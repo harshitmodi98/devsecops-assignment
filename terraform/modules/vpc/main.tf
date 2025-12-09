@@ -94,28 +94,21 @@ resource "aws_flow_log" "vpc" {
 }
 
 ##############################
-# Default Security Group (Fully Safe Version)
+# Default Security Group
 ##############################
-resource "aws_security_group" "default_restricted" {
-  name        = "${var.name}-default-sg"
-  description = "Default security group - restrict all inbound traffic"
-  vpc_id      = aws_vpc.this.id
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
 
-  # ❌ DO NOT ADD ingress {} → removing avoids provider schema errors
-  # No ingress blocks = all inbound denied (as required)
+  # No ingress allowed
+  ingress = []
 
-  # Allow outbound only inside VPC
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = [var.vpc_cidr]
-    description = "Allow outbound traffic only within VPC"
-  }
+  # No egress allowed
+  egress = []
 
   revoke_rules_on_delete = true
 
   tags = {
-    Name = "${var.name}-default-sg"
+    Name = "${var.name}-default-vpc-sg"
   }
 }
+
